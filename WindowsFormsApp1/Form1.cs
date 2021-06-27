@@ -16,8 +16,10 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         Excel.Application excelApp = new Excel.Application();
+        Excel.Workbook workbook = null;
 
         private string file_path = "";
+        private string save_file_path = "";
 
         private Hashtable mainTable = new Hashtable();
         private ArrayList deliveryList = new ArrayList();
@@ -45,7 +47,7 @@ namespace WindowsFormsApp1
 
         private void loadExcel()
         {
-            Excel.Workbook workbook = excelApp.Workbooks.Open(file_path);
+            workbook = excelApp.Workbooks.Open(file_path);
 
             foreach (Excel.Worksheet worksheet in workbook.Worksheets)
             {
@@ -118,14 +120,78 @@ namespace WindowsFormsApp1
 
                         coupangList.Add(obj);
                     }
+
+                    writeText("load coupang success");
                 }
                 else if (worksheet.Name.Equals("11번가"))
                 {
+                    Excel.Range range = worksheet.UsedRange;
 
+                    object[,] data = (object[,])range.Value;
+
+                    if (data == null)
+                        continue;
+
+                    for (int row = 2; row <= data.GetLength(0); row++)
+                    {
+
+                        if (data[row, 1] == null)
+                            continue;
+
+                        _11Store obj = new _11Store();
+
+                        obj.paydate = data[row, 5].ToString();
+                        obj.orderNum = data[row, 3].ToString();
+                        obj.productNum = data[row, 39].ToString();
+                        obj.productName = data[row, 7].ToString();
+                        obj.option = data[row, 8].ToString();
+                        obj.productamount = data[row, 11].ToString();
+                        obj.orderName = data[row, 36].ToString();
+                        obj.orderPhone = data[row, 29].ToString();
+                        obj.orderPrice = data[row, 12].ToString();
+                        obj.deliveryPrice = data[row, 28].ToString();
+                        obj.PCCC = data[row, 57].ToString();
+                        obj.resPrice = data[row, 48].ToString();
+
+                        _11storeList.Add(obj);
+                    }
+
+                    writeText("load 11store success");
                 }
                 else if (worksheet.Name.Equals("스마트스토어"))
                 {
+                    Excel.Range range = worksheet.UsedRange;
 
+                    object[,] data = (object[,])range.Value;
+
+                    if (data == null)
+                        continue;
+
+                    for (int row = 2; row <= data.GetLength(0); row++)
+                    {
+
+                        if (data[row, 1] == null)
+                            continue;
+
+                        SmartStore obj = new SmartStore();
+
+                        obj.paydate = data[row, 58].ToString();
+                        obj.orderNum = data[row, 2].ToString();
+                        obj.productNum = data[row, 16].ToString();
+                        obj.productName = data[row, 17].ToString();
+                        obj.optionInfo = data[row, 19].ToString();
+                        obj.account = data[row, 21].ToString();
+                        obj.orderName = data[row, 9].ToString();
+                        obj.orderPhone = data[row, 44].ToString();
+                        obj.productPrice = data[row, 26].ToString();
+                        obj.amountDeliveryPrice = data[row, 35].ToString();
+                        obj.PCCC = data[row, 57].ToString();
+                        obj.calculatePrice = data[row, 54].ToString();
+
+                        smartstoreList.Add(obj);
+                    }
+
+                    writeText("load smartstore success");
                 }
 
             }
@@ -136,7 +202,6 @@ namespace WindowsFormsApp1
         private void initSaveSheet()
         {
             Excel.Workbook workbook = excelApp.Workbooks.Add();
-
             Excel.Worksheet workseet = workbook.Worksheets.Add();
 
             workseet.Cells[1, 1] = "주문플랫폼";
@@ -213,18 +278,24 @@ namespace WindowsFormsApp1
                 workseet.Cells[cnt, 33] = res.tax;
 
                 cnt++;
+
+                writeText("write obj : " + res.name);
             }
 
             workseet.Columns.AutoFit();
             //workbook.Save();
-            workbook.SaveAs("C:\\Users\\Solution Team\\Desktop\\R5M2\\test.xlsx", Excel.XlFileFormat.xlWorkbookDefault);
+            workbook.SaveAs(save_file_path, Excel.XlFileFormat.xlWorkbookDefault);
             workbook.Close(true);
             excelApp.Quit();
+
+            writeText("success process");
         }
 
         private List<ResultObject> getResultObj()
         {
             List<ResultObject> list = new List<ResultObject>();
+            bool isHit = false;
+            string beforePCCC = "";
 
             foreach(Delivery delivery in deliveryList)
             {
@@ -259,25 +330,128 @@ namespace WindowsFormsApp1
                         obj.payCard = "";
                         obj.coststate = "";
                         obj.usdPrice = "";
-                        obj.wonPrice = delivery.sumPrice.Replace("\\", "").Replace(",", "");
+                        obj.wonPrice = obj.PCCC.Equals(beforePCCC) ? "" : delivery.sumPrice.Replace("\\", "").Replace(",", "");
                         obj.deliveryPlace = "";
                         obj.deliveryCom = "";
                         obj.HBL = delivery.HBL;
-                        obj.deliveryPrice = delivery.deliveryPrice;
+                        obj.deliveryPrice = obj.PCCC.Equals(beforePCCC) ? "" : delivery.deliveryPrice;
                         obj.deliveryCom2 = "";
                         obj.deliveryPrice2 = "";
                         obj.tax = "";
 
+                        writeText("is Hot Coupang : " + obj.name);
+
                         list.Add(obj);
+
+                        beforePCCC = obj.PCCC;
+                    }
+                }
+
+                foreach(_11Store store in _11storeList)
+                {
+                    if (!String.IsNullOrEmpty(delivery.clearance) && delivery.clearance.Equals(store.PCCC))
+                    {
+                        ResultObject obj = new ResultObject();
+
+                        obj.orderMarket = "11번가";
+                        obj.orderDate = store.paydate.Substring(0, 10).Replace("/", "-");
+                        obj.innerOrderNum = store.orderNum;
+                        obj.productCode = store.productNum;
+                        obj.ProductName = store.productName;
+                        obj.option = store.option;
+                        obj.orderCount = store.productamount;
+                        obj.orderPerName = store.orderName;
+                        obj.orderPhone = store.orderPhone;
+                        obj.name = delivery.name;
+                        obj.phone = delivery.phone;
+                        obj.address = delivery.receiverAddr;
+                        obj.addrNum = delivery.addressNum;
+                        obj.msg = delivery.msg;
+                        obj.PCCC = delivery.clearance;
+                        obj.payPrice = store.orderPrice;
+                        obj.payDeliveryPrice = store.deliveryPrice;
+                        obj.resPrice = store.resPrice;
+                        obj.releaseDate = delivery.serviceData;
+                        obj.buyCom = "";
+                        obj.buyOrderNum = delivery.marketOrderNum;
+                        obj.payCard = "";
+                        obj.coststate = "";
+                        obj.usdPrice = "";
+                        obj.wonPrice = obj.PCCC.Equals(beforePCCC) ? "" : delivery.sumPrice.Replace("\\", "").Replace(",", "");
+                        obj.deliveryPlace = "";
+                        obj.deliveryCom = "";
+                        obj.HBL = delivery.HBL;
+                        obj.deliveryPrice = obj.PCCC.Equals(beforePCCC) ? "" : delivery.deliveryPrice;
+                        obj.deliveryCom2 = "";
+                        obj.deliveryPrice2 = "";
+                        obj.tax = "";
+
+                        writeText("is Hit 11store : " + obj.name);
+
+                        list.Add(obj);
+
+                        beforePCCC = obj.PCCC;
+                    }
+                }
+
+                foreach(SmartStore store in smartstoreList)
+                {
+                    if (!String.IsNullOrEmpty(delivery.clearance) && delivery.clearance.Equals(store.PCCC))
+                    {
+                        ResultObject obj = new ResultObject();
+
+                        obj.orderMarket = "11번가";
+                        obj.orderDate = store.paydate.Substring(0, 10);
+                        obj.innerOrderNum = store.orderNum;
+                        obj.productCode = store.productNum;
+                        obj.ProductName = store.productName;
+                        obj.option = store.optionInfo;
+                        obj.orderCount = store.account;
+                        obj.orderPerName = store.orderName;
+                        obj.orderPhone = store.orderPhone;
+                        obj.name = delivery.name;
+                        obj.phone = delivery.phone;
+                        obj.address = delivery.receiverAddr;
+                        obj.addrNum = delivery.addressNum;
+                        obj.msg = delivery.msg;
+                        obj.PCCC = delivery.clearance;
+                        obj.payPrice = store.productPrice;
+                        obj.payDeliveryPrice = store.amountDeliveryPrice;
+                        obj.resPrice = store.calculatePrice;
+                        obj.releaseDate = delivery.serviceData;
+                        obj.buyCom = "";
+                        obj.buyOrderNum = delivery.marketOrderNum;
+                        obj.payCard = "";
+                        obj.coststate = "";
+                        obj.usdPrice = "";
+                        obj.wonPrice = obj.PCCC.Equals(beforePCCC) ? "" : delivery.sumPrice.Replace("\\", "").Replace(",", "");
+                        obj.deliveryPlace = "";
+                        obj.deliveryCom = "";
+                        obj.HBL = delivery.HBL;
+                        obj.deliveryPrice = obj.PCCC.Equals(beforePCCC) ? "" : delivery.deliveryPrice;
+                        obj.deliveryCom2 = "";
+                        obj.deliveryPrice2 = "";
+                        obj.tax = "";
+
+                        writeText("is Hit smartstore : " + obj.name);
+
+                        list.Add(obj);
+
+                        beforePCCC = obj.PCCC;
                     }
                 }
             }
+
+            writeText("make mesultObj success");
 
             return list;
         }
 
         private void Button2_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(file_path) || string.IsNullOrEmpty(save_file_path))
+                return;
+
             loadExcel();
         }
 
@@ -285,6 +459,18 @@ namespace WindowsFormsApp1
         {
             richTextBox1.AppendText(msg);
             richTextBox1.AppendText("\r\n");
+            richTextBox1.ScrollToCaret();
+        }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            saveFileDialog1.DefaultExt = "xlsx";
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                save_file_path = saveFileDialog1.FileName.ToString();
+                textBox2.Text = save_file_path;
+            }
         }
     }
 }

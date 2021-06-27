@@ -13,44 +13,20 @@ namespace AccountingBook.objectClass
         // 도서산간 추가배송비	구매수(수량)	옵션판매가(판매단가)	구매자	구매자전화번호	수취인이름	수취인전화번호	우편번호	
         // 수취인 주소	배송메세지	상품별 추가메시지	주문자 추가메시지	배송완료일	구매확정일자	개인통관번호(PCCC)	
         // 통관용구매자전화번호	기타	결제위치
-        public string serviceNum { get; set; }
-        public string bundledelNum { get; set; }
+        //public string serviceNum { get; set; }
+        //public string bundledelNum { get; set; }
         public string orderNum { get; set; }
-        public string deliveryCom { get; set; }
-        public string deliveryNum { get; set; }
-        public string separationDelivery { get; set; }
-        public string separationReleaseDate { get; set; }
-        public string orderReleaseDate { get; set; }
-        public string releaseDate { get; set; }
+
         public string orderDate { get; set; }
         public string productName { get; set; }
         public string optiosnName { get; set; }
-        public string exposureProductName { get; set; }
-        public string productID { get; set; }
-        public string optionID { get; set; }
-        public string firstOptionName { get; set; }
+
         public string productCode { get; set; }
-        public string barcode { get; set; }
         public string paymentPrice { get; set; }
-        public string deliveryState { get; set; }
         public string deliveryPrice { get; set; }
-        public string plusDeliveryPrice { get; set; }
         public string orderCount { get; set; }
-        public string optionPrice { get; set; }
         public string orderName { get; set; }
         public string orderPhone { get; set; }
-        public string receiverName { get; set; }
-        public string receiverPhone { get; set; }
-        public string addrNum { get; set; }
-        public string receiverAddr { get; set; }
-        public string deliveryMsg { get; set; }
-        public string productaddMsg { get; set; }
-        public string receiverMsg { get; set; }
-        public string deliveryDate { get; set; }
-        public string orderSuccessDate { get; set; }
         public string PCCC { get; set; }
-        public string PCCCOrderPhone { get; set; }
-        public string etc { get; set; }
-        public string payPlace { get; set; }
     }
 }

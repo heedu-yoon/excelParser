@@ -16,63 +16,23 @@ namespace AccountingBook.objectClass
         // 배송메세지	출고지	결제수단	수수료 과금구분	수수료결제방식	결제수수료	매출연동 수수료	매출연동 수수료 구분	정산예정금액	
         // 유입경로	구매자 주민등록번호	개인통관고유부호	주문일시	배송속성	배송희망일	(수취인연락처1)	(수취인연락처2)	(우편번호)	(기본주소)	
         // (상세주소)	(구매자연락처)
-        public string productOrderNum { get; set; }
         public string orderNum { get; set; }
-        public string deliveryMethod { get; set; }
-        public string deliveryCom { get; set; }
-        public string HBL { get; set; }
-        public string releaseDate { get; set; }
-        public string channel { get; set; }
         public string orderName { get; set; }
-        public string receiverID { get; set; }
-        public string receiverName { get; set; }
-        public string orderStatus { get; set; }
-        public string orderDetailStatus { get; set; }
-        public string payPlace { get; set; }
         public string paydate { get; set; }
         public string productNum { get; set; }
         public string productName { get; set; }
-        public string productKind { get; set; }
         public string optionInfo { get; set; }
-        public string optionManageCode { get; set; }
         public string account { get; set; }
-        public string optionPrice { get; set; }
         public string productPrice { get; set; }
-        public string discountPrice { get; set; }
-        public string sellerDiscount { get; set; }
-        public string amountPrice { get; set; }
-        public string gift { get; set; }
-        public string confirmDate { get; set; }
-        public string releaseLimitDate { get; set; }
-        public string releaseConfirmDate { get; set; }
-        public string invoicePrintDate { get; set; }
-        public string deliveryPriceState { get; set; }
-        public string deliveryBundleNum { get; set; }
-        public string deliveryPricestatus { get; set; }
         public string amountDeliveryPrice { get; set; }
-        public string addDeliveryPrice { get; set; }
-        public string deliveryDiscountPrice { get; set; }
         // 판매자 상품코드	판매자 내부코드1	판매자 내부코드2	수취인연락처1	수취인연락처2	배송지	구매자연락처	우편번호	
         // 배송메세지	출고지	결제수단	수수료 과금구분	수수료결제방식	결제수수료	매출연동 수수료	매출연동 수수료 구분	정산예정금액	
         // 유입경로	구매자 주민등록번호	개인통관고유부호	주문일시	배송속성	배송희망일	(수취인연락처1)	(수취인연락처2)	(우편번호)	(기본주소)	
         // (상세주소)	(구매자연락처)
-        public string sellerProcCode { get; set; }
-        public string sellerInnercode1 { get; set; }
-        public string sellerInnercode2 { get; set; }
-        public string receiverPhone1 { get; set; }
-        public string receiverPhone2 { get; set; }
-        public string deliveryPlace { get; set; }
         public string orderPhone { get; set; }
-        public string addrNum { get; set; }
-        public string deliveryMsg { get; set; }
-        public string releasePlace { get; set; }
-        public string payTools { get; set; }
-        public string feeChargeState { get; set; }
-        public string feePayTools { get; set; }
-        public string payfee { get; set; }
-        public string salesfee { get; set; }
-        public string salesfeestatus { get; set; }
         public string calculatePrice { get; set; }
+
+        public string PCCC { get; set; }
 
     }
 }
